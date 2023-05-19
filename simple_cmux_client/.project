@@ -1684,6 +1684,11 @@
 			<location>/home/franz/esp-idf-v5.0.2/components/esp_netif/lwip/esp_netif_lwip_defaults.c</location>
 		</link>
 		<link>
+			<name>build/ide/esp_idf_components/esp_netif/lwip/esp_netif_lwip_ppp.c</name>
+			<type>1</type>
+			<location>/home/franz/esp-idf-v5.0.2/components/esp_netif/lwip/esp_netif_lwip_ppp.c</location>
+		</link>
+		<link>
 			<name>build/ide/esp_idf_components/esp_phy/src/lib_printf.c</name>
 			<type>1</type>
 			<location>/home/franz/esp-idf-v5.0.2/components/esp_phy/src/lib_printf.c</location>
@@ -4042,6 +4047,31 @@
 			<name>build/ide/esp_idf_components/lwip/lwip/src/netif/ppp/vj.c</name>
 			<type>1</type>
 			<location>/home/franz/esp-idf-v5.0.2/components/lwip/lwip/src/netif/ppp/vj.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/lwip/lwip/src/netif/ppp/polarssl/arc4.c</name>
+			<type>1</type>
+			<location>/home/franz/esp-idf-v5.0.2/components/lwip/lwip/src/netif/ppp/polarssl/arc4.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/lwip/lwip/src/netif/ppp/polarssl/des.c</name>
+			<type>1</type>
+			<location>/home/franz/esp-idf-v5.0.2/components/lwip/lwip/src/netif/ppp/polarssl/des.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/lwip/lwip/src/netif/ppp/polarssl/md4.c</name>
+			<type>1</type>
+			<location>/home/franz/esp-idf-v5.0.2/components/lwip/lwip/src/netif/ppp/polarssl/md4.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/lwip/lwip/src/netif/ppp/polarssl/md5.c</name>
+			<type>1</type>
+			<location>/home/franz/esp-idf-v5.0.2/components/lwip/lwip/src/netif/ppp/polarssl/md5.c</location>
+		</link>
+		<link>
+			<name>build/ide/esp_idf_components/lwip/lwip/src/netif/ppp/polarssl/sha1.c</name>
+			<type>1</type>
+			<location>/home/franz/esp-idf-v5.0.2/components/lwip/lwip/src/netif/ppp/polarssl/sha1.c</location>
 		</link>
 	</linkedResources>
 </projectDescription>
