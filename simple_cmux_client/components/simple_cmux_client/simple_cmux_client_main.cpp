@@ -26,6 +26,7 @@
 #include "esp_https_ota.h"      // For potential OTA configuration
 #include "vfs_resource/vfs_create.hpp"
 #include "SIM7070_gnss.hpp"
+#include "shiny_module_dce.hpp"
 
 #if defined(CONFIG_EXAMPLE_FLOW_CONTROL_NONE)
 #define EXAMPLE_FLOW_CONTROL ESP_MODEM_FLOW_CONTROL_NONE
@@ -116,6 +117,16 @@ private:
 };
 
 
+
+#ifdef CONFIG_EXAMPLE_MODEM_DEVICE_SHINY
+command_result handle_urc(uint8_t *data, size_t len)
+{
+    ESP_LOG_BUFFER_HEXDUMP("on_read", data, len, ESP_LOG_INFO);
+    return command_result::TIMEOUT;
+}
+#endif
+
+
 extern "C" void simple_cmux_client_main(void)
 {
     /* Init and register system/core components */
@@ -158,7 +169,9 @@ extern "C" void simple_cmux_client_main(void)
     esp_netif_t *esp_netif = esp_netif_new(&netif_ppp_config);
     assert(esp_netif);
 
-#if CONFIG_EXAMPLE_MODEM_DEVICE_BG96 == 1
+#if CONFIG_EXAMPLE_MODEM_DEVICE_SHINY == 1
+    auto dce = create_shiny_dce(&dce_config, dte, esp_netif);
+#elif CONFIG_EXAMPLE_MODEM_DEVICE_BG96 == 1
     auto dce = create_BG96_dce(&dce_config, dte, esp_netif);
 #elif CONFIG_EXAMPLE_MODEM_DEVICE_SIM800 == 1
     auto dce = create_SIM800_dce(&dce_config, dte, esp_netif);
@@ -174,6 +187,11 @@ extern "C" void simple_cmux_client_main(void)
 #error "Unsupported device"
 #endif
     assert(dce);
+
+#ifdef CONFIG_EXAMPLE_MODEM_DEVICE_SHINY
+    ESP_LOGI(TAG, "Adding URC handler");
+    dce->set_on_read(handle_urc);
+#endif
 
 
     dce->sync();
@@ -217,13 +235,16 @@ extern "C" void simple_cmux_client_main(void)
         return;
     }
 
+
     /* Read some data from the modem */
     std::string str;
+#ifndef CONFIG_EXAMPLE_MODEM_DEVICE_SHINY
     while (dce->get_operator_name(str) != esp_modem::command_result::OK) {
         // Getting operator name could fail... retry after 500 ms
         vTaskDelay(pdMS_TO_TICKS(500));
     }
     std::cout << "Operator name:" << str << std::endl;
+#endif
 
 #if CONFIG_EXAMPLE_MODEM_DEVICE_SIM7070_GNSS == 1
     if (dce->set_gnss_power_mode(1) == esp_modem::command_result::OK) {
