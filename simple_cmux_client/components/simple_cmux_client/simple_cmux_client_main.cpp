@@ -178,9 +178,17 @@ extern "C" void simple_cmux_client_main(void)
 
     dce->sync();
     dce->sync();
-    dce->sync();
+
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
     dce->sync();
 
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
+    dce->sync();
+
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
+    dce->sync();
+    dce->sync();
+    dce->sync();
 
 
     if (dte_config.uart_config.flow_control == ESP_MODEM_FLOW_CONTROL_HW) {
