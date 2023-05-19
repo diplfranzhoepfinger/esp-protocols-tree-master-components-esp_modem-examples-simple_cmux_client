@@ -12,6 +12,15 @@
 #include "mqtt_client.h"
 #include "simple_mqtt_client.hpp"
 
+
+
+extern const uint8_t client_cert_pem_start[] asm("_binary_client_crt_start");
+extern const uint8_t client_cert_pem_end[] asm("_binary_client_crt_end");
+extern const uint8_t client_key_pem_start[] asm("_binary_client_key_start");
+extern const uint8_t client_key_pem_end[] asm("_binary_client_key_end");
+extern const uint8_t server_cert_pem_start[] asm("_binary_mosquitto_org_crt_start");
+extern const uint8_t server_cert_pem_end[] asm("_binary_mosquitto_org_crt_end");
+
 /**
  * Reference to the MQTT event base
  */
@@ -26,6 +35,9 @@ struct MqttClientHandle {
         esp_mqtt_client_config_t config = { };
 #if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5, 0, 0)
         config.broker.address.uri = uri.c_str();
+        config.broker.verification.certificate = (const char *)server_cert_pem_start;
+        config.credentials.authentication.certificate = (const char *)client_cert_pem_start;
+        config.credentials.authentication.key = (const char *)client_key_pem_start;
 #else
         config.uri = uri.c_str();
 #endif
