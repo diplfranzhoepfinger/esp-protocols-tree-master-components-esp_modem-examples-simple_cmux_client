@@ -5,6 +5,11 @@ menu "Example Configuration"
         default EXAMPLE_MODEM_DEVICE_BG96
         help
             Select modem device connected to the ESP DTE.
+        config EXAMPLE_MODEM_DEVICE_SHINY
+            bool "SHINY"
+            help
+                SHINY is a GSM/GPRS module.
+                It supports SHINY.
         config EXAMPLE_MODEM_DEVICE_SIM800
             bool "SIM800"
             help

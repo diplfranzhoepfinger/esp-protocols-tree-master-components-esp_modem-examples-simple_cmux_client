@@ -26,6 +26,7 @@
 #include "esp_https_ota.h"      // For potential OTA configuration
 #include "vfs_resource/vfs_create.hpp"
 #include "SIM7070_gnss.hpp"
+#include "shiny_module_dce.hpp"
 
 #if defined(CONFIG_EXAMPLE_FLOW_CONTROL_NONE)
 #define EXAMPLE_FLOW_CONTROL ESP_MODEM_FLOW_CONTROL_NONE
@@ -116,6 +117,16 @@ private:
 };
 
 
+
+#ifdef CONFIG_EXAMPLE_MODEM_DEVICE_SHINY
+command_result handle_urc(uint8_t *data, size_t len)
+{
+    ESP_LOG_BUFFER_HEXDUMP("on_read", data, len, ESP_LOG_INFO);
+    return command_result::TIMEOUT;
+}
+#endif
+
+
 extern "C" void simple_cmux_client_main(void)
 {
     /* Init and register system/core components */
@@ -174,6 +185,11 @@ extern "C" void simple_cmux_client_main(void)
 #error "Unsupported device"
 #endif
     assert(dce);
+
+#ifdef CONFIG_EXAMPLE_MODEM_DEVICE_SHINY
+    ESP_LOGI(TAG, "Adding URC handler");
+    dce->set_on_read(handle_urc);
+#endif
 
 
     dce->sync();
