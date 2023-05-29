@@ -244,7 +244,7 @@ extern "C" void simple_cmux_client_main(void)
     }
 #endif
 #ifdef SUPPORT_URC_HANDLER
-    ESP_LOGI(TAG, "Romoving URC handler");
+    ESP_LOGI(TAG, "Removing URC handler");
     dce->set_on_read(nullptr);
 #endif
     if (dce->set_mode(esp_modem::modem_mode::CMUX_MODE)) {
