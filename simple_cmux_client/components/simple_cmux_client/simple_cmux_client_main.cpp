@@ -243,14 +243,20 @@ extern "C" void simple_cmux_client_main(void)
         vTaskDelay(pdMS_TO_TICKS(1000)); // Need to wait for some time after unlocking the SIM
     }
 #endif
-
+#ifdef SUPPORT_URC_HANDLER
+    ESP_LOGI(TAG, "Romoving URC handler");
+    dce->set_on_read(nullptr);
+#endif
     if (dce->set_mode(esp_modem::modem_mode::CMUX_MODE)) {
         std::cout << "Modem has correctly entered multiplexed command/data mode" << std::endl;
     } else {
         ESP_LOGE(TAG, "Failed to configure multiplexed command mode... exiting");
         return;
     }
-
+#ifdef SUPPORT_URC_HANDLER
+    ESP_LOGI(TAG, "Adding URC handler");
+    dce->set_on_read(handle_urc);
+#endif
 
     /* Read some data from the modem */
     std::string str;
