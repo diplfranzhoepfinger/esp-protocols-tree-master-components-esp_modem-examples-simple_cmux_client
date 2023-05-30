@@ -13,6 +13,7 @@
 */
 #include <cstring>
 #include <iostream>
+#include "modem_pwkey.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
 #include "esp_netif.h"
@@ -25,8 +26,20 @@
 #include "esp_vfs_dev.h"        // For optional VFS support
 #include "esp_https_ota.h"      // For potential OTA configuration
 #include "vfs_resource/vfs_create.hpp"
-#include "SIM7070_gnss.hpp"
-#include "shiny_module_dce.hpp"
+
+#if defined(CONFIG_EXAMPLE_MODEM_DEVICE_SHINY)
+    #include "shiny_module_dce.hpp"
+#elif defined(CONFIG_EXAMPLE_MODEM_DEVICE_SIM7070_GNSS)
+    #include "SIM7070_gnss.hpp"
+#elif defined(CONFIG_EXAMPLE_MODEM_DEVICE_A7672_GNSS)
+    #include "A7672_gnss.hpp"
+#endif
+
+
+
+#if defined(CONFIG_EXAMPLE_MODEM_DEVICE_SHINY) || defined(CONFIG_EXAMPLE_MODEM_DEVICE_SIM7070_GNSS) || defined(CONFIG_EXAMPLE_MODEM_DEVICE_A7672_GNSS)
+    #define SUPPORT_URC_HANDLER 1
+#endif
 
 #if defined(CONFIG_EXAMPLE_FLOW_CONTROL_NONE)
 #define EXAMPLE_FLOW_CONTROL ESP_MODEM_FLOW_CONTROL_NONE
@@ -118,7 +131,7 @@ private:
 
 
 
-#ifdef CONFIG_EXAMPLE_MODEM_DEVICE_SHINY
+#ifdef SUPPORT_URC_HANDLER
 command_result handle_urc(uint8_t *data, size_t len)
 {
     ESP_LOG_BUFFER_HEXDUMP("on_read", data, len, ESP_LOG_INFO);
@@ -181,6 +194,10 @@ extern "C" void simple_cmux_client_main(void)
     auto dce = create_SIM7070_dce(&dce_config, dte, esp_netif);
 #elif CONFIG_EXAMPLE_MODEM_DEVICE_SIM7070_GNSS == 1
     auto dce = create_SIM7070_GNSS_dce(&dce_config, dte, esp_netif);
+#elif CONFIG_EXAMPLE_MODEM_DEVICE_A7600 == 1
+    auto dce = create_A7600_dce(&dce_config, dte, esp_netif);
+#elif CONFIG_EXAMPLE_MODEM_DEVICE_A7672_GNSS == 1
+    auto dce = create_A7672_GNSS_dce(&dce_config, dte, esp_netif);
 #elif CONFIG_EXAMPLE_MODEM_DEVICE_SIM7600 == 1
     auto dce = create_SIM7600_dce(&dce_config, dte, esp_netif);
 #else
@@ -188,7 +205,7 @@ extern "C" void simple_cmux_client_main(void)
 #endif
     assert(dce);
 
-#ifdef CONFIG_EXAMPLE_MODEM_DEVICE_SHINY
+#ifdef SUPPORT_URC_HANDLER
     ESP_LOGI(TAG, "Adding URC handler");
     dce->set_on_read(handle_urc);
 #endif
@@ -227,14 +244,20 @@ extern "C" void simple_cmux_client_main(void)
         vTaskDelay(pdMS_TO_TICKS(1000)); // Need to wait for some time after unlocking the SIM
     }
 #endif
-
+#ifdef SUPPORT_URC_HANDLER
+    ESP_LOGI(TAG, "Removing URC handler");
+    dce->set_on_read(nullptr);
+#endif
     if (dce->set_mode(esp_modem::modem_mode::CMUX_MODE)) {
         std::cout << "Modem has correctly entered multiplexed command/data mode" << std::endl;
     } else {
         ESP_LOGE(TAG, "Failed to configure multiplexed command mode... exiting");
         return;
     }
-
+#ifdef SUPPORT_URC_HANDLER
+    ESP_LOGI(TAG, "Adding URC handler");
+    dce->set_on_read(handle_urc);
+#endif
 
     /* Read some data from the modem */
     std::string str;
@@ -246,7 +269,7 @@ extern "C" void simple_cmux_client_main(void)
     std::cout << "Operator name:" << str << std::endl;
 #endif
 
-#if CONFIG_EXAMPLE_MODEM_DEVICE_SIM7070_GNSS == 1
+#if defined(CONFIG_EXAMPLE_MODEM_DEVICE_A7600) || defined(CONFIG_EXAMPLE_MODEM_DEVICE_A7672_GNSS)
     if (dce->set_gnss_power_mode(1) == esp_modem::command_result::OK) {
         std::cout << "Modem set_gnss_power_mode: OK" << std::endl;
     }
@@ -287,6 +310,9 @@ extern "C" void simple_cmux_client_main(void)
     if (dce->get_imsi(str) == esp_modem::command_result::OK) {
         std::cout << "Modem IMSI number:" << str << std::endl;
     }
+
+    //Power down Without exiting CMUX First and without hanghup PPP Session first for test.
+    power_down_modem_pwkey();
 
 
 #if CONFIG_EXAMPLE_MODEM_DEVICE_SIM7070_GNSS == 1

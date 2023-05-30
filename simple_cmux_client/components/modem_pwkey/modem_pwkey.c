@@ -96,7 +96,7 @@ void power_down_modem_pwkey(void)
 
     ESP_LOGI(TAG, "POWER OFF");
     gpio_set_level(SIMCOM_PWRKEY_PIN, 1); // switch on for 1s.
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
+    vTaskDelay(3500 / portTICK_PERIOD_MS);
     ESP_LOGI(TAG, "POWER OFF OK");
     gpio_set_level(SIMCOM_PWRKEY_PIN, 0); // switch on done
     do {
