@@ -13,6 +13,7 @@
 */
 #include <cstring>
 #include <iostream>
+#include "modem_pwkey.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
 #include "esp_netif.h"
@@ -309,6 +310,9 @@ extern "C" void simple_cmux_client_main(void)
     if (dce->get_imsi(str) == esp_modem::command_result::OK) {
         std::cout << "Modem IMSI number:" << str << std::endl;
     }
+
+    //Power down Without exiting CMUX First and without hanghup PPP Session first for test.
+    power_down_modem_pwkey();
 
 
 #if CONFIG_EXAMPLE_MODEM_DEVICE_SIM7070_GNSS == 1
