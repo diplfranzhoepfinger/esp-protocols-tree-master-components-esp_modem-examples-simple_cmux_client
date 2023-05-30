@@ -5,6 +5,11 @@ menu "Example Configuration"
         default EXAMPLE_MODEM_DEVICE_BG96
         help
             Select modem device connected to the ESP DTE.
+        config EXAMPLE_MODEM_DEVICE_SHINY
+            bool "SHINY"
+            help
+                SHINY is a GSM/GPRS module.
+                It supports SHINY.
         config EXAMPLE_MODEM_DEVICE_SIM800
             bool "SIM800"
             help
@@ -30,6 +35,14 @@ menu "Example Configuration"
             bool "SIM7600"
             help
                 SIM7600 is a Multi-Band LTE-TDD/LTE-FDD/HSPA+ and GSM/GPRS/EDGE module.
+        config EXAMPLE_MODEM_DEVICE_A7600
+            bool "A7600"
+            help
+                A7600 is the LTE Cat 1 module that supports wireless communication modes of LTE-FDD/TDD/GSM/GPRS/EDGE.
+        config EXAMPLE_MODEM_DEVICE_A7672_GNSS
+            bool "A7672_GNSS"
+            help
+                A7672_GNSS is the LTE Cat 1 module that supports wireless communication modes of LTE-FDD/TDD/GSM/GPRS/EDGE with Support for GNSS Location API
     endchoice
 
     config EXAMPLE_MODEM_PPP_APN
