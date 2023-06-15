@@ -19,6 +19,7 @@
 #include "shiny_module_dce.hpp"
 
 using namespace esp_modem;
+constexpr auto const TAG = "Shiny";
 
 //
 // Define preprocessor's forwarding to dce_commands definitions
@@ -43,7 +44,10 @@ using namespace esp_modem;
 // Repeat all declarations and forward to the AT commands defined in esp_modem::dce_commands:: namespace
 //
 #define ESP_MODEM_DECLARE_DCE_COMMAND(name, return_type, arg_nr, ...) \
-     return_type Shiny::DCE::name(__VA_ARGS__) { return esp_modem::dce_commands::name(this ARGS(arg_nr) ); }
+    return_type Shiny::DCE::name(__VA_ARGS__) \
+    {   \
+        return dce_commands::name(this ARGS(arg_nr) ); \
+    }
 
 DECLARE_ALL_COMMAND_APIS(return_type name(...) )
 

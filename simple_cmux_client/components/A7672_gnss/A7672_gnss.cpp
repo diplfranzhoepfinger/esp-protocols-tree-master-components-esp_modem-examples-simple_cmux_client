@@ -21,11 +21,41 @@
 #include "generate/esp_modem_command_declare.inc"
 #include "A7672_gnss.hpp"
 
+using namespace esp_modem;
 constexpr auto const TAG = "A7672_gnss";
 
+//
+// Define preprocessor's forwarding to dce_commands definitions
+//
+
+// Helper macros to handle multiple arguments of declared API
+#define ARGS0
+#define ARGS1 , p1
+#define ARGS2 , p1 , p2
+#define ARGS3 , p1 , p2 , p3
+#define ARGS4 , p1 , p2 , p3, p4
+#define ARGS5 , p1 , p2 , p3, p4, p5
+#define ARGS6 , p1 , p2 , p3, p4, p5, p6
+
+#define _ARGS(x)  ARGS ## x
+#define ARGS(x)  _ARGS(x)
 
 #define CMD_OK    (1)
 #define CMD_FAIL  (2)
+
+//
+// Repeat all declarations and forward to the AT commands defined in esp_modem::dce_commands:: namespace
+//
+#define ESP_MODEM_DECLARE_DCE_COMMAND(name, return_type, num, ...) \
+    return_type A7672::DCE_gnss::name(__VA_ARGS__) \
+    {   \
+        return dce_commands::name(this ARGS(num)); \
+    }
+
+DECLARE_ALL_COMMAND_APIS(return_type name(...) )
+
+#undef ESP_MODEM_DECLARE_DCE_COMMAND
+
 
 namespace gnss_factory {
 using namespace esp_modem;
