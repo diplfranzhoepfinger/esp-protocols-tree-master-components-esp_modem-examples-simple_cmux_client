@@ -33,7 +33,9 @@ public:
 namespace Shiny {
 
 using namespace esp_modem;
-
+/**
+ * @brief DCE for the Shiny. Here we've got to forward the general commands.
+ */
 class DCE : public esp_modem::DCE_T<MyShinyModem>, public CommandableIf {
 public:
     using DCE_T<MyShinyModem>::DCE_T;

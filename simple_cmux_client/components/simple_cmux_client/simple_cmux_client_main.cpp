@@ -267,8 +267,9 @@ extern "C" void simple_cmux_client_main(void)
 
     /* Read some data from the modem */
     std::string str;
+    int a;
 #ifndef CONFIG_EXAMPLE_MODEM_DEVICE_SHINY
-    while (dce->get_operator_name(str) != esp_modem::command_result::OK) {
+    while (dce->get_operator_name(str, a) != esp_modem::command_result::OK) {
         // Getting operator name could fail... retry after 500 ms
         vTaskDelay(pdMS_TO_TICKS(500));
     }

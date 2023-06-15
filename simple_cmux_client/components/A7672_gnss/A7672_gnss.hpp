@@ -34,6 +34,8 @@ public:
 };
 
 namespace A7672 {
+
+using namespace esp_modem;
 /**
  * @brief DCE for the A7672_gnss. Here we've got to forward the general commands, aa well as the GNSS one.
  */
@@ -62,16 +64,9 @@ public:
     }
 
 #define ESP_MODEM_DECLARE_DCE_COMMAND(name, return_type, num, ...) \
-    template <typename ...Agrs> \
-    esp_modem::return_type name(Agrs&&... args)   \
-    {   \
-        return device->name(std::forward<Agrs>(args)...); \
-    }
+    esp_modem::return_type name(__VA_ARGS__);
 
-    DECLARE_ALL_COMMAND_APIS(forwards name(...)
-    {
-        device->name(...);
-    } )
+    DECLARE_ALL_COMMAND_APIS(forwards name(...))
 
 #undef ESP_MODEM_DECLARE_DCE_COMMAND
 
