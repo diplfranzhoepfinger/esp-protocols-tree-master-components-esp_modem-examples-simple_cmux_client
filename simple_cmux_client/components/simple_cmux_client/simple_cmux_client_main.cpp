@@ -260,12 +260,6 @@ extern "C" void simple_cmux_client_main(void)
         ESP_LOGE(TAG, "Failed to configure CMUX_MANUAL_MODE... exiting");
         return;
     }
-    if (dce->set_mode(esp_modem::modem_mode::CMUX_MANUAL_SWAP)) {
-        std::cout << "Modem has correctly entered CMUX_MANUAL_SWAP" << std::endl;
-    } else {
-        ESP_LOGE(TAG, "Failed to configure CMUX_MANUAL_SWAP... exiting");
-        return;
-    }
     if (dce->set_mode(esp_modem::modem_mode::CMUX_MANUAL_DATA)) {
         std::cout << "Modem has correctly entered CMUX_MANUAL_DATA" << std::endl;
     } else {
