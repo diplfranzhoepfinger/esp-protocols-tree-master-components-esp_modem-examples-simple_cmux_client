@@ -378,6 +378,12 @@ extern "C" void simple_cmux_client_main(void)
 
     /* Close multiplexed command/data mode */
 #if CONFIG_EXAMPLE_CLOSE_CMUX_AT_END == 1
+
+#ifdef SUPPORT_URC_HANDLER
+    ESP_LOGI(TAG, "Removing URC handler");
+    dce->set_on_read(nullptr);
+#endif
+
     if (dce->set_mode(esp_modem::modem_mode::CMUX_MANUAL_SWAP)) {
         std::cout << "Modem has correctly entered CMUX_MANUAL_SWAP" << std::endl;
     } else {
@@ -391,15 +397,44 @@ extern "C" void simple_cmux_client_main(void)
         return;
     }
 #endif
+#ifdef SUPPORT_URC_HANDLER
+    ESP_LOGI(TAG, "Adding URC handler");
+    dce->set_on_read(handle_urc);
+#endif
 
 
 
+    // wait 10s
+    vTaskDelay(10000 / portTICK_PERIOD_MS);
 
 
     /* Again reading some data from the modem */
     if (dce->get_imsi(str) == esp_modem::command_result::OK) {
         std::cout << "Modem IMSI number:" << str << std::endl;
     }
+
+    // wait 10s
+    vTaskDelay(10000 / portTICK_PERIOD_MS);
+
+#ifdef SUPPORT_URC_HANDLER
+    ESP_LOGI(TAG, "Removing URC handler");
+    dce->set_on_read(nullptr);
+#endif
+    if (dce->set_mode(esp_modem::modem_mode::CMUX_MANUAL_DATA)) {
+        std::cout << "Modem has correctly entered CMUX_MANUAL_DATA" << std::endl;
+    } else {
+        ESP_LOGE(TAG, "Failed to configure CMUX_MANUAL_DATA... exiting");
+        return;
+    }
+#ifdef SUPPORT_URC_HANDLER
+    ESP_LOGI(TAG, "Adding URC handler");
+    dce->set_on_read(handle_urc);
+#endif
+
+
+    // wait 10s
+    vTaskDelay(10000 / portTICK_PERIOD_MS);
+
 
     //Power down
     power_down_modem_pwkey();
