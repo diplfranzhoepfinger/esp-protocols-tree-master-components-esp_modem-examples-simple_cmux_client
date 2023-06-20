@@ -318,8 +318,6 @@ extern "C" void simple_cmux_client_main(void)
         std::cout << "Modem IMSI number:" << str << std::endl;
     }
 
-    //Power down Without exiting CMUX First and without hanghup PPP Session first for test.
-    power_down_modem_pwkey();
 
 
 #if CONFIG_EXAMPLE_MODEM_DEVICE_SIM7070_GNSS == 1
@@ -381,4 +379,13 @@ extern "C" void simple_cmux_client_main(void)
         return;
     }
 #endif
+
+
+
+
+    //Power down
+    power_down_modem_pwkey();
+
+
+
 }
