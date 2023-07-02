@@ -478,7 +478,26 @@ extern "C" void simple_cmux_client_main(void)
 
 
 
-
+#ifdef SUPPORT_URC_HANDLER
+    ESP_LOGI(TAG, "Removing URC handler");
+    dce->set_on_read(nullptr);
+#endif
+    if (dce->set_mode(esp_modem::modem_mode::CMUX_MANUAL_MODE)) {
+        std::cout << "Modem has correctly entered CMUX_MANUAL_MODE" << std::endl;
+    } else {
+        ESP_LOGE(TAG, "Failed to configure CMUX_MANUAL_MODE... exiting");
+        return;
+    }
+    if (dce->set_mode(esp_modem::modem_mode::CMUX_MANUAL_DATA)) {
+        std::cout << "Modem has correctly entered CMUX_MANUAL_DATA" << std::endl;
+    } else {
+        ESP_LOGE(TAG, "Failed to configure CMUX_MANUAL_DATA... exiting");
+        return;
+    }
+#ifdef SUPPORT_URC_HANDLER
+    ESP_LOGI(TAG, "Adding URC handler");
+    dce->set_on_read(handle_urc);
+#endif
 
 
 
