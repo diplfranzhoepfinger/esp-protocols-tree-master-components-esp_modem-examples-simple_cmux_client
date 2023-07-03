@@ -150,7 +150,7 @@ bool DTE::set_mode(modem_mode m)
         return false;
     }
     // manual CMUX transitions: Exit CMUX
-    if (m == modem_mode::CMUX_MANUAL_EXIT && mode == modem_mode::CMUX_MANUAL_MODE) {
+    if (m == modem_mode::CMUX_MANUAL_EXIT) {
         if (exit_cmux()) {
             mode = modem_mode::COMMAND_MODE;
             return true;
