@@ -420,6 +420,52 @@ extern "C" void simple_cmux_client_main(void)
 #endif
 
 
+
+
+    // wait 10s
+    vTaskDelay(10000 / portTICK_PERIOD_MS);
+
+
+    //Power down
+    power_down_modem_pwkey();
+
+
+    // wait 10s
+    vTaskDelay(10000 / portTICK_PERIOD_MS);
+
+
+    // power Up
+    power_up_modem_pwkey();
+
+
+
+
+    if (dte_config.uart_config.flow_control == ESP_MODEM_FLOW_CONTROL_HW) {
+
+
+        //set this mode also to the DCE.
+        if (command_result::OK != dce->set_flow_control(2, 2)) {
+            ESP_LOGE(TAG, "Failed to set the set_flow_control mode");
+            return;
+        }
+        ESP_LOGI(TAG, "set_flow_control OK");
+
+
+    } else {
+        ESP_LOGI(TAG, "not set_flow_control, because 2-wire mode active.");
+    }
+
+
+
+    dce->sync();
+    dce->sync();
+
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
+    dce->sync();
+
+
+
+
     // wait 10s
     vTaskDelay(10000 / portTICK_PERIOD_MS);
 
