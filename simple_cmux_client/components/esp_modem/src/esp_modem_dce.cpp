@@ -143,9 +143,9 @@ bool DCE_Mode::set_unsafe(DTE *dte, ModuleIf *device, Netif &netif, modem_mode m
         mode = modem_mode::CMUX_MANUAL_MODE;
         return true;
     case modem_mode::CMUX_MANUAL_EXIT:
-        if (mode != modem_mode::CMUX_MANUAL_MODE) {
-            return false;
-        }
+//        if (mode != modem_mode::CMUX_MANUAL_MODE) {
+//            return false;
+//        }
         if (!dte->set_mode(m)) {
             return false;
         }
