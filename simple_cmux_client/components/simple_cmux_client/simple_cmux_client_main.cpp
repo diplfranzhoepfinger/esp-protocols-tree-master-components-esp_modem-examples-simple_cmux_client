@@ -426,6 +426,15 @@ extern "C" void simple_cmux_client_main(void)
     vTaskDelay(10000 / portTICK_PERIOD_MS);
 
 
+    /* Again reading some data from the modem */
+    if (dce->get_imsi(str) == esp_modem::command_result::OK) {
+        std::cout << "Modem IMSI number:" << str << std::endl;
+    }
+
+    // wait 10s
+    vTaskDelay(10000 / portTICK_PERIOD_MS);
+
+
     //Power down
     power_down_modem_pwkey();
 
