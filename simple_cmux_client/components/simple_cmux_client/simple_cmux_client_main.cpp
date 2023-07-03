@@ -500,7 +500,13 @@ extern "C" void simple_cmux_client_main(void)
 #endif
 
 
-
+#ifndef CONFIG_EXAMPLE_MODEM_DEVICE_SHINY
+    while (dce->get_operator_name(str, a) != esp_modem::command_result::OK) {
+        // Getting operator name could fail... retry after 500 ms
+        vTaskDelay(pdMS_TO_TICKS(500));
+    }
+    std::cout << "Operator name:" << str << std::endl;
+#endif
 
 
 }
