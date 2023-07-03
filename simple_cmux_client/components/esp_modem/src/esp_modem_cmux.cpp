@@ -355,7 +355,7 @@ bool CMux::deinit()
                 break;
             }
             if (timeout++ > 100) {
-                return false;
+            	break;
             }
         }
     }
@@ -370,7 +370,7 @@ bool CMux::deinit()
             break;
         }
         if (timeout++ > 100) {
-            return false;
+        	break;
         }
     }
     term->set_read_cb(nullptr);
