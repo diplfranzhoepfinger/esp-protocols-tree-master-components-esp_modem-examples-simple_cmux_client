@@ -73,9 +73,9 @@ command_result DTE::command(const std::string &cmd, got_line_cb got_line, uint32
 
 bool DTE::exit_cmux()
 {
-    if (!cmux_term->deinit()) {
-        return false;
-    }
+//    if (!cmux_term->deinit()) {
+//        return false;
+//    }
     auto ejected = cmux_term->detach();
     // return the ejected terminal and buffer back to this DTE
     primary_term = std::move(ejected.first);
