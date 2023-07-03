@@ -414,28 +414,11 @@ extern "C" void simple_cmux_client_main(void)
 
 
 
-    /* Close multiplexed command/data mode */
-#if CONFIG_EXAMPLE_CLOSE_CMUX_AT_END == 1
 
 #ifdef SUPPORT_URC_HANDLER
     ESP_LOGI(TAG, "Removing URC handler");
     dce->set_on_read(nullptr);
 #endif
-
-    if (dce->set_mode(esp_modem::modem_mode::CMUX_MANUAL_SWAP)) {
-        std::cout << "Modem has correctly entered CMUX_MANUAL_SWAP" << std::endl;
-    } else {
-        ESP_LOGE(TAG, "Failed to configure CMUX_MANUAL_MODE... exiting");
-        return;
-    }
-    if (dce->set_mode(esp_modem::modem_mode::CMUX_MANUAL_COMMAND)) {
-        std::cout << "Modem has correctly entered command mode" << std::endl;
-    } else {
-        ESP_LOGE(TAG, "Failed to configure desired mode... exiting");
-        return;
-    }
-#endif
-
 
 
 
