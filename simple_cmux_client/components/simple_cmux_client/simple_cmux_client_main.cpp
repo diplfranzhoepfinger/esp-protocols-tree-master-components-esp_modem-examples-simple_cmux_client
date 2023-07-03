@@ -441,6 +441,53 @@ extern "C" void simple_cmux_client_main(void)
     vTaskDelay(10000 / portTICK_PERIOD_MS);
 
 
+    // UART DTE clean-up
+    dce.reset();                      // delete the object, leaving v empty
+    dce = nullptr;
+    esp_netif_destroy(esp_netif);
+    esp_netif = nullptr;
+
+
+
+    // wait 10s
+    vTaskDelay(10000 / portTICK_PERIOD_MS);
+
+
+    /* Create the PPP and DCE objects */
+
+    esp_netif = esp_netif_new(&netif_ppp_config);
+    assert(esp_netif);
+
+#if CONFIG_EXAMPLE_MODEM_DEVICE_SHINY == 1
+    dce = create_shiny_dce(&dce_config, dte, esp_netif);
+#elif CONFIG_EXAMPLE_MODEM_DEVICE_BG96 == 1
+    dce = create_BG96_dce(&dce_config, dte, esp_netif);
+#elif CONFIG_EXAMPLE_MODEM_DEVICE_SIM800 == 1
+    dce = create_SIM800_dce(&dce_config, dte, esp_netif);
+#elif CONFIG_EXAMPLE_MODEM_DEVICE_SIM7000 == 1
+    dce = create_SIM7000_dce(&dce_config, dte, esp_netif);
+#elif CONFIG_EXAMPLE_MODEM_DEVICE_SIM7070 == 1
+    dce = create_SIM7070_dce(&dce_config, dte, esp_netif);
+#elif CONFIG_EXAMPLE_MODEM_DEVICE_SIM7070_GNSS == 1
+    dce = create_SIM7070_GNSS_dce(&dce_config, dte, esp_netif);
+#elif CONFIG_EXAMPLE_MODEM_DEVICE_A7600 == 1
+    dce = create_A7600_dce(&dce_config, dte, esp_netif);
+#elif CONFIG_EXAMPLE_MODEM_DEVICE_A7672_GNSS == 1
+    dce = create_A7672_GNSS_dce(&dce_config, dte, esp_netif);
+#elif CONFIG_EXAMPLE_MODEM_DEVICE_SIM7600 == 1
+    dce = create_SIM7600_dce(&dce_config, dte, esp_netif);
+#else
+#error "Unsupported device"
+#endif
+    assert(dce);
+
+
+
+
+
+
+
+
     // power Up
     power_up_modem_pwkey();
 
