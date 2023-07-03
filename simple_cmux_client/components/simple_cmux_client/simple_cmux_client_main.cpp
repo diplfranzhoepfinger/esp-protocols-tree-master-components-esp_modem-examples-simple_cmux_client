@@ -437,6 +437,10 @@ extern "C" void simple_cmux_client_main(void)
     power_down_modem_pwkey();
 
 
+    /*TODO: clarify if this is needed - we need to stop the NETIF and to kill the PPP layer */
+    esp_netif_action_stop(esp_netif, nullptr, 0, nullptr);
+
+
     // wait 10s
     vTaskDelay(10000 / portTICK_PERIOD_MS);
 
