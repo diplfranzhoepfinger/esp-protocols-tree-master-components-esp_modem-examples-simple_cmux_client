@@ -434,7 +434,7 @@ extern "C" void simple_cmux_client_main(void)
 
 
     //Power down
-    power_down_modem_pwkey();
+    //power_down_modem_pwkey();
 
 
     // wait 10s
@@ -442,7 +442,7 @@ extern "C" void simple_cmux_client_main(void)
 
 
     // power Up
-    power_up_modem_pwkey();
+    //power_up_modem_pwkey();
 
 
     if (dte_config.uart_config.flow_control == ESP_MODEM_FLOW_CONTROL_HW) {
