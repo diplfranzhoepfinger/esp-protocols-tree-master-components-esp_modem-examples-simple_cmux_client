@@ -377,7 +377,7 @@ extern "C" void simple_cmux_client_main(void)
 #endif // CONFIG_EXAMPLE_PERFORM_OTA
 
 
-
+    esp_netif_action_stop(esp_netif, nullptr, 0, nullptr);
 
 
     /**
