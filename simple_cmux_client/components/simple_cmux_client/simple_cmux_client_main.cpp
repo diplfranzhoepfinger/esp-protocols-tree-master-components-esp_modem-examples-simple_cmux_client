@@ -398,13 +398,78 @@ extern "C" void simple_cmux_client_main(void)
 
     /* Close multiplexed command/data mode */
 #if CONFIG_EXAMPLE_CLOSE_CMUX_AT_END == 1
-    if (dce->set_mode(esp_modem::modem_mode::COMMAND_MODE)) {
+
+#ifdef SUPPORT_URC_HANDLER
+    ESP_LOGI(TAG, "Removing URC handler");
+    dce->set_on_read(nullptr);
+#endif
+
+    if (dce->set_mode(esp_modem::modem_mode::CMUX_MANUAL_SWAP)) {
+        std::cout << "Modem has correctly entered CMUX_MANUAL_SWAP" << std::endl;
+    } else {
+        ESP_LOGE(TAG, "Failed to configure CMUX_MANUAL_MODE... exiting");
+        return;
+    }
+    if (dce->set_mode(esp_modem::modem_mode::CMUX_MANUAL_COMMAND)) {
         std::cout << "Modem has correctly entered command mode" << std::endl;
     } else {
         ESP_LOGE(TAG, "Failed to configure desired mode... exiting");
         return;
     }
 #endif
+
+
+
+
+
+    //Leave CMUX Mode totally
+
+    if (dce->set_mode(esp_modem::modem_mode::CMUX_MANUAL_EXIT)) {
+        std::cout << "Modem has correctly entered CMUX_MANUAL_EXIT" << std::endl;
+    } else {
+        ESP_LOGE(TAG, "Failed to configure CMUX_MANUAL_EXIT... exiting");
+        return;
+    }
+
+
+
+    //now only 1 Terminal.
+#ifdef SUPPORT_URC_HANDLER
+    ESP_LOGI(TAG, "Adding URC handler");
+    dce->set_on_read(handle_urc);
+#endif
+
+
+    // wait 10s
+    vTaskDelay(10000 / portTICK_PERIOD_MS);
+
+
+
+
+vTaskDelay(2000 / portTICK_PERIOD_MS);
+dce->sync();
+vTaskDelay(2000 / portTICK_PERIOD_MS);
+dce->sync();
+vTaskDelay(2000 / portTICK_PERIOD_MS);
+dce->sync();
+vTaskDelay(2000 / portTICK_PERIOD_MS);
+dce->sync();
+
+
+/* AT+CPSI Inquiring UE system information */
+res = dce->get_user_equipment_system_information(milli_volt, bcl, bcs);
+if (res == esp_modem::command_result::OK) {
+	std::cout << "Inquiring UE system information:" << str << std::endl;
+} else {
+	std::cout << "Inquiring UE system information ERROR or TIMEOUT" << std::endl;
+}
+
+
+
+vTaskDelay(2000 / portTICK_PERIOD_MS);
+dce->sync();
+
+
 
 
 
