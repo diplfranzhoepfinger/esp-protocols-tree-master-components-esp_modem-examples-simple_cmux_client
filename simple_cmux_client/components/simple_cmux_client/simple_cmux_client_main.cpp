@@ -329,7 +329,9 @@ extern "C" void simple_cmux_client_main(void)
 
     /* AT+CPSI Inquiring UE system information */
     int milli_volt, bcl, bcs;
-    if (dce->get_user_equipment_system_information(milli_volt, bcl, bcs) == esp_modem::command_result::OK) {
+    esp_modem::command_result res = dce->get_user_equipment_system_information(milli_volt, bcl, bcs);
+    dce->sync();
+    if (res == esp_modem::command_result::OK) {
         std::cout << "Inquiring UE system information:" << str << std::endl;
     } else {
     	std::cout << "Inquiring UE system information ERROR or TIMEOUT" << std::endl;
