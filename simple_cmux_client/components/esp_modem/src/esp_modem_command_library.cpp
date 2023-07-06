@@ -580,5 +580,32 @@ command_result set_gnss_power_mode_a76xx(CommandableIf *t, int mode)
     return generic_command_common(t, "AT+CGNSSPWR=" + std::to_string(mode) + "\r");
 }
 
+//dummy
+command_result get_user_equipment_system_information(CommandableIf *t, int &voltage, int &bcs, int &bcl)
+{
+    ESP_LOGV(TAG, "%s", __func__ );
+    return command_result::OK;
+}
+
+command_result get_user_equipment_system_information_a76xx(CommandableIf *t, int &voltage, int &bcs, int &bcl)
+{
+    ESP_LOGV(TAG, "%s", __func__ );
+    std::string_view out;
+    auto ret = generic_get_string(t, "AT+CPSI?\r", out);
+    if (ret != command_result::OK) {
+        return ret;
+    }
+    // Parsing +CPSI: TODO
+    constexpr std::string_view pattern = "+CPSI: ";
+    //constexpr int num_pos = pattern.size();
+    int dot_pos;
+    if (out.find(pattern) == std::string::npos ||
+            (dot_pos = out.find('.')) == std::string::npos) {
+        return command_result::FAIL;
+    }
+
+    return command_result::OK;
+}
+
 
 } // esp_modem::dce_commands

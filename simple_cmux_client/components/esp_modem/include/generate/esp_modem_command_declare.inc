@@ -277,7 +277,13 @@ ESP_MODEM_DECLARE_DCE_COMMAND(set_gnss_power_mode, command_result, 1, INT_IN(p1,
  */ \
 ESP_MODEM_DECLARE_DCE_COMMAND(get_gnss_power_mode, command_result, 1, INT_OUT(p1, mode)) \
     \
-
+/**
+ * @brief Inquiring UE system information
+ * @param[out] TODO
+ * @return OK, FAIL or TIMEOUT
+ */ \
+ESP_MODEM_DECLARE_DCE_COMMAND(get_user_equipment_system_information, command_result, 3, INT_OUT(p1, voltage), INT_OUT(p2, bcs), INT_OUT(p3, bcl)) \
+    \
 
 #ifdef GENERATE_DOCS
 // cat ../include/generate/esp_modem_command_declare.inc | clang++ -E -P -CC  -xc++ -I../include -DGENERATE_DOCS  - | sed -n '1,/DCE command documentation/!p'

@@ -324,8 +324,17 @@ extern "C" void simple_cmux_client_main(void)
         std::cout << "Modem IMSI number:" << str << std::endl;
     }
 
-    //Power down Without exiting CMUX First and without hanghup PPP Session first for test.
-    power_down_modem_pwkey();
+
+
+
+    /* AT+CPSI Inquiring UE system information */
+    int milli_volt, bcl, bcs;
+    if (dce->get_user_equipment_system_information(milli_volt, bcl, bcs) == esp_modem::command_result::OK) {
+        std::cout << "Modem IMSI number:" << str << std::endl;
+    }
+
+
+
 
 
 #if CONFIG_EXAMPLE_MODEM_DEVICE_SIM7070_GNSS == 1
@@ -387,4 +396,10 @@ extern "C" void simple_cmux_client_main(void)
         return;
     }
 #endif
+
+
+
+
+//Power down Without exiting CMUX First and without hanghup PPP Session first for test.
+power_down_modem_pwkey();
 }

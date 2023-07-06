@@ -144,6 +144,7 @@ class A7600: public GenericModule {
     using GenericModule::GenericModule;
 public:
     command_result set_gnss_power_mode(int mode) override;
+    command_result get_user_equipment_system_information(int &voltage, int &bcs, int &bcl) override;
 };
 
 /**
