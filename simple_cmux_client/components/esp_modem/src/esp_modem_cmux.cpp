@@ -212,6 +212,15 @@ bool CMux::on_header(CMuxFrame &frame)
     }
     size_t payload_offset = std::min(frame.len, 4 - frame_header_offset);
     memcpy(frame_header + frame_header_offset, frame.ptr, payload_offset);
+    if (frame_header[1] == 0xEF) {
+        dlci = 0;
+        type = frame_header[1];
+        payload_len = 0;
+        data_available(&frame.ptr[0], payload_len); // Notify DISC
+        frame.advance(payload_offset);
+        state = cmux_state::FOOTER;
+        return true;
+    }
     if ((frame_header[3] & 1) == 0) {
         if (frame_header_offset + frame.len <= 4) {
             frame_header_offset += frame.len;
