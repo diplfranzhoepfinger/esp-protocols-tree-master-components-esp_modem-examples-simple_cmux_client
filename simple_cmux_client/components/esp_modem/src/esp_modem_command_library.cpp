@@ -580,14 +580,7 @@ command_result set_gnss_power_mode_a76xx(CommandableIf *t, int mode)
     return generic_command_common(t, "AT+CGNSSPWR=" + std::to_string(mode) + "\r");
 }
 
-//dummy
 command_result get_user_equipment_system_information(CommandableIf *t, int &voltage, int &bcs, int &bcl)
-{
-    ESP_LOGV(TAG, "%s", __func__ );
-    return command_result::OK;
-}
-
-command_result get_user_equipment_system_information_a76xx(CommandableIf *t, int &voltage, int &bcs, int &bcl)
 {
     ESP_LOGV(TAG, "%s", __func__ );
     std::string_view out;
