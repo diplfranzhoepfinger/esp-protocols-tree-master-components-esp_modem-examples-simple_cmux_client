@@ -330,11 +330,18 @@ extern "C" void simple_cmux_client_main(void)
     /* AT+CPSI Inquiring UE system information */
     int milli_volt, bcl, bcs;
     if (dce->get_user_equipment_system_information(milli_volt, bcl, bcs) == esp_modem::command_result::OK) {
-        std::cout << "Modem IMSI number:" << str << std::endl;
+        std::cout << "Inquiring UE system information:" << str << std::endl;
+    } else {
+    	std::cout << "Inquiring UE system information ERROR or TIMEOUT" << std::endl;
     }
 
 
 
+
+    vTaskDelay(15000 / portTICK_PERIOD_MS);
+    dce->sync();
+    vTaskDelay(2000 / portTICK_PERIOD_MS);
+    dce->sync();
 
 
 #if CONFIG_EXAMPLE_MODEM_DEVICE_SIM7070_GNSS == 1

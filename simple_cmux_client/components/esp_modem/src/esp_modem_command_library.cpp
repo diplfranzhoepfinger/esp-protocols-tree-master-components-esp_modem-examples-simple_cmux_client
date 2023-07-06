@@ -584,7 +584,7 @@ command_result get_user_equipment_system_information(CommandableIf *t, int &volt
 {
     ESP_LOGV(TAG, "%s", __func__ );
     std::string_view out;
-    auto ret = generic_get_string(t, "AT+CPSI?\r", out);
+    auto ret = generic_get_string(t, "AT+CPSI?\r", out, 35000);
     if (ret != command_result::OK) {
         return ret;
     }
