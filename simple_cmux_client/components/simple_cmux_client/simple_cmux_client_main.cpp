@@ -148,6 +148,10 @@ extern "C" void simple_cmux_client_main(void)
 
     /* Configure and create the DTE */
     esp_modem_dte_config_t dte_config = ESP_MODEM_DTE_DEFAULT_CONFIG();
+
+    dte_config.dte_buffer_size = 1024; //start even with a bigger buffer, to trigger inflation less often.
+
+
     /* setup UART specific configuration based on kconfig options */
     dte_config.uart_config.tx_io_num = CONFIG_EXAMPLE_MODEM_UART_TX_PIN;
     dte_config.uart_config.rx_io_num = CONFIG_EXAMPLE_MODEM_UART_RX_PIN;
