@@ -13,6 +13,7 @@
 #define BOOL_OUT(param, name) bool&  _ARG(param, name)
 #define INT_OUT(param, name) int&  _ARG(param, name)
 #define INTEGER_LIST_IN(param, name) const int* _ARG(param, name)
+#define LONG_INT_OUT(param, name) long int&  _ARG(param, name)
 
 #define STRUCT_OUT(struct_name, p1)  struct_name& p1
 #else

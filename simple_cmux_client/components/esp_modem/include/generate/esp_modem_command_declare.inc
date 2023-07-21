@@ -24,6 +24,13 @@
 ESP_MODEM_DECLARE_DCE_COMMAND(sync, command_result, 0) \
     \
 /**
+ * @brief Reads the operator code
+ * @param[out] operator code
+ * @return OK, FAIL or TIMEOUT
+ */ \
+ESP_MODEM_DECLARE_DCE_COMMAND(get_operator_code, command_result, 1, STRING_OUT(p1, code)) \
+    \
+/**
  * @brief Reads the operator name
  * @param[out] operator name
  * @param[out] access technology
@@ -102,6 +109,13 @@ ESP_MODEM_DECLARE_DCE_COMMAND(resume_data_mode, command_result, 0) \
 ESP_MODEM_DECLARE_DCE_COMMAND(set_pdp_context, command_result, 1, STRUCT_OUT(PdpContext, p1)) \
     \
 /**
+ * @brief configures pdp context
+ * @param[in] p1 PdP context struct to setup modem cellular connection
+ * @return OK, FAIL or TIMEOUT
+ */ \
+ESP_MODEM_DECLARE_DCE_COMMAND(configure_pdp_context, command_result, 3, INT_IN(p1, id), STRING_IN(p2, protocol),STRING_IN(p3, apn)) \
+    \
+/**
  * @brief Switches to the command mode
  * @return OK, FAIL or TIMEOUT
  */ \
@@ -132,7 +146,35 @@ ESP_MODEM_DECLARE_DCE_COMMAND(get_imei, command_result, 1, STRING_OUT(p1, imei))
  * @param[out] name module name
  * @return OK, FAIL or TIMEOUT
  */ \
+ESP_MODEM_DECLARE_DCE_COMMAND(get_network_mode, command_result, 1, STRING_OUT(p1, name)) \
+    \
+/**
+ * @brief Reads the module name
+ * @param[out] name module name
+ * @return OK, FAIL or TIMEOUT
+ */ \
+ESP_MODEM_DECLARE_DCE_COMMAND(get_preferred_mode, command_result, 1, STRING_OUT(p1, name)) \
+    \
+/**
+  * @brief Reads the module name
+  * @param[out] name module name
+  * @return OK, FAIL or TIMEOUT
+  */ \
+ESP_MODEM_DECLARE_DCE_COMMAND(get_network_bands, command_result, 1, STRING_OUT(p1, name)) \
+    \
+/**
+ * @brief Reads the module name
+ * @param[out] name module name
+ * @return OK, FAIL or TIMEOUT
+ */ \
 ESP_MODEM_DECLARE_DCE_COMMAND(get_module_name, command_result, 1, STRING_OUT(p1, name)) \
+    \
+/**
+* @brief Reads the module SW version
+* @param[out] name module SW version
+* @return OK, FAIL or TIMEOUT
+*/ \
+ESP_MODEM_DECLARE_DCE_COMMAND(get_module_sw_version, command_result, 1, STRING_OUT(p1, name)) \
     \
 /**
  * @brief Sets the modem to data mode
@@ -278,12 +320,33 @@ ESP_MODEM_DECLARE_DCE_COMMAND(set_gnss_power_mode, command_result, 1, INT_IN(p1,
 ESP_MODEM_DECLARE_DCE_COMMAND(get_gnss_power_mode, command_result, 1, INT_OUT(p1, mode)) \
     \
 /**
- * @brief Inquiring UE system information
- * @param[out] TODO
+ * @brief Reads the network registration code
+ * @param[out] operator code
  * @return OK, FAIL or TIMEOUT
  */ \
-ESP_MODEM_DECLARE_DCE_COMMAND(get_user_equipment_system_information, command_result, 3, INT_OUT(p1, voltage), INT_OUT(p2, bcs), INT_OUT(p3, bcl)) \
+ESP_MODEM_DECLARE_DCE_COMMAND(get_network_registration, command_result, 1, INT_OUT(p1, reg_status)) \
     \
+ /**
+ * @brief Reads the network registration code
+ * @param[out] operator code
+ * @return OK, FAIL or TIMEOUT
+ */ \
+ESP_MODEM_DECLARE_DCE_COMMAND(get_ue_system_information_gsm, command_result, 2, STRING_OUT(p1, local_area_code), INT_OUT(p2, cell_id)) \
+    \
+/**
+* @brief Reads the network registration code
+* @param[out] operator code
+* @return OK, FAIL or TIMEOUT
+*/ \
+ESP_MODEM_DECLARE_DCE_COMMAND(get_ue_system_information_lte, command_result, 3, STRING_OUT(p1, trace_area_code), INT_OUT(p2, pcell_id), LONG_INT_OUT(p3, rssnr)) \
+    \
+/**
+* @brief Reads the network registration code
+* @param[out] operator code
+* @return OK, FAIL or TIMEOUT
+*/ \
+ESP_MODEM_DECLARE_DCE_COMMAND(get_ue_system_information_attachment, command_result, 1, STRING_OUT(p1, sys_mode)) \
+   \
 
 #ifdef GENERATE_DOCS
 // cat ../include/generate/esp_modem_command_declare.inc | clang++ -E -P -CC  -xc++ -I../include -DGENERATE_DOCS  - | sed -n '1,/DCE command documentation/!p'

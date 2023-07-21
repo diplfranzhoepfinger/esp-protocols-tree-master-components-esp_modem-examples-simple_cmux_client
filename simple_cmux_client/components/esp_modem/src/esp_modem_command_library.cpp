@@ -141,7 +141,7 @@ command_result reset(CommandableIf *t)
 command_result set_baud(CommandableIf *t, int baud)
 {
     ESP_LOGV(TAG, "%s", __func__ );
-    return generic_command_common(t,  "AT+IPR=" + std::to_string(baud) + "\r");
+    return generic_command_common(t,  "AT+IPR=" + std::to_string(baud) + "\r", 9000);
 }
 
 command_result hang_up(CommandableIf *t)
@@ -154,7 +154,7 @@ command_result get_battery_status(CommandableIf *t, int &voltage, int &bcs, int 
 {
     ESP_LOGV(TAG, "%s", __func__ );
     std::string_view out;
-    auto ret = generic_get_string(t, "AT+CBC\r", out);
+    auto ret = generic_get_string(t, "AT+CBC\r", out, 15000);
     if (ret != command_result::OK) {
         return ret;
     }
@@ -251,6 +251,23 @@ command_result get_operator_name(CommandableIf *t, std::string &operator_name, i
     }
     return command_result::FAIL;
 }
+command_result get_operator_code(CommandableIf *t, std::string &code)
+{
+    ESP_LOGV(TAG, "%s", __func__ );
+    std::string out;
+
+    auto ret = generic_get_string(t, "AT+COPN\r", out);
+    if (ret != command_result::OK) {
+        return ret;
+    }
+    auto pos = out.find("+COPN");
+    if ((pos = out.find(',')) == std::string::npos) {
+        return command_result::FAIL;
+    }
+    code = out.substr(0,pos);
+
+    return command_result::OK;
+}
 
 command_result set_echo(CommandableIf *t, bool on)
 {
@@ -269,6 +286,13 @@ command_result set_pdp_context(CommandableIf *t, PdpContext &pdp)
     return generic_command_common(t, pdp_command, 150000);
 }
 
+command_result configure_pdp_context(CommandableIf *t, int id, const std::string &protocol, const std::string &apn)
+{
+  ESP_LOGV(TAG, "%s", __func__ );
+  std::string pdp_config = "AT+CGDCONT=" + std::to_string(id) +
+      ",\"" + protocol + "\",\"" + apn + "\"\r";
+  return generic_command_common(t, pdp_config);
+}
 command_result set_data_mode(CommandableIf *t)
 {
     ESP_LOGV(TAG, "%s", __func__ );
@@ -298,7 +322,7 @@ command_result set_command_mode(CommandableIf *t)
 command_result get_imsi(CommandableIf *t, std::string &imsi_number)
 {
     ESP_LOGV(TAG, "%s", __func__ );
-    return generic_get_string(t, "AT+CIMI\r", imsi_number, 5000);
+    return generic_get_string(t, "AT+CIMI\r", imsi_number, 20000);
 }
 
 command_result get_imei(CommandableIf *t, std::string &out)
@@ -311,6 +335,30 @@ command_result get_module_name(CommandableIf *t, std::string &out)
 {
     ESP_LOGV(TAG, "%s", __func__ );
     return generic_get_string(t, "AT+CGMM\r", out, 5000);
+}
+
+command_result get_network_mode(CommandableIf *t, std::string &mode)
+{
+    ESP_LOGV(TAG, "%s", __func__ );
+    return generic_get_string(t, "AT+CNMP?\r", mode);
+}
+
+command_result get_preferred_mode(CommandableIf *t, std::string &pref_mode)
+{
+    ESP_LOGV(TAG, "%s", __func__ );
+    return generic_get_string(t, "AT+CMNB?\r", pref_mode);
+}
+
+command_result get_network_bands(CommandableIf *t, std::string &out)
+{
+    ESP_LOGV(TAG, "%s", __func__ );
+    return generic_get_string(t, "AT+CBANDCFG?\r", out);
+}
+
+command_result get_module_sw_version(CommandableIf *t, std::string &out)
+{
+    ESP_LOGV(TAG, "%s", __func__ );
+    return generic_get_string(t, "AT+CGMR\r", out);
 }
 
 command_result sms_txt_mode(CommandableIf *t, bool txt = true)
@@ -350,14 +398,14 @@ command_result send_sms(CommandableIf *t, const std::string &number, const std::
 command_result set_cmux(CommandableIf *t)
 {
     ESP_LOGV(TAG, "%s", __func__ );
-    return generic_command_common(t, "AT+CMUX=0\r");
+    return generic_command_common(t, "AT+CMUX=0\r", 10000);
 }
 
 command_result read_pin(CommandableIf *t, bool &pin_ok)
 {
     ESP_LOGV(TAG, "%s", __func__ );
     std::string_view out;
-    auto ret = generic_get_string(t, "AT+CPIN?\r", out);
+    auto ret = generic_get_string(t, "AT+CPIN?\r", out, 9000);
     if (ret != command_result::OK) {
         return ret;
     }
@@ -418,20 +466,20 @@ command_result get_signal_quality(CommandableIf *t, int &rssi, int &ber)
 command_result set_operator(CommandableIf *t, int mode, int format, const std::string &oper)
 {
     ESP_LOGV(TAG, "%s", __func__ );
-    return generic_command_common(t, "AT+COPS=" + std::to_string(mode) + "," + std::to_string(format) + ",\"" + oper + "\"\r", 90000);
+    return generic_command_common(t, "AT+COPS=" + std::to_string(mode) + "," + std::to_string(format) + ",\"" + oper + "\"\r", 120000);
 }
 
 command_result set_network_attachment_state(CommandableIf *t, int state)
 {
     ESP_LOGV(TAG, "%s", __func__ );
-    return generic_command_common(t, "AT+CGATT=" + std::to_string(state) + "\r");
+    return generic_command_common(t, "AT+CGATT=" + std::to_string(state) + "\r", 15000);
 }
 
 command_result get_network_attachment_state(CommandableIf *t, int &state)
 {
     ESP_LOGV(TAG, "%s", __func__ );
     std::string_view out;
-    auto ret = generic_get_string(t, "AT+CGATT?\r", out);
+    auto ret = generic_get_string(t, "AT+CGATT?\r", out, 120000);
     if (ret != command_result::OK) {
         return ret;
     }
@@ -458,7 +506,7 @@ command_result get_radio_state(CommandableIf *t, int &state)
 {
     ESP_LOGV(TAG, "%s", __func__ );
     std::string_view out;
-    auto ret = generic_get_string(t, "AT+CFUN?\r", out);
+    auto ret = generic_get_string(t, "AT+CFUN?\r", out, 9000);
     if (ret != command_result::OK) {
         return ret;
     }
@@ -523,7 +571,7 @@ command_result get_network_system_mode(CommandableIf *t, int &mode)
 {
     ESP_LOGV(TAG, "%s", __func__ );
     std::string_view out;
-    auto ret = generic_get_string(t, "AT+CNSMOD?\r", out);
+    auto ret = generic_get_string(t, "AT+CNSMOD?\r", out, 9000);
     if (ret != command_result::OK) {
         return ret;
     }
@@ -551,7 +599,7 @@ command_result get_gnss_power_mode(CommandableIf *t, int &mode)
 {
     ESP_LOGV(TAG, "%s", __func__ );
     std::string_view out;
-    auto ret = generic_get_string(t, "AT+CGNSPWR?\r", out);
+    auto ret = generic_get_string(t, "AT+CGNSPWR?\r", out, 9000);
     if (ret != command_result::OK) {
         return ret;
     }
@@ -580,25 +628,236 @@ command_result set_gnss_power_mode_a76xx(CommandableIf *t, int mode)
     return generic_command_common(t, "AT+CGNSSPWR=" + std::to_string(mode) + "\r");
 }
 
-command_result get_user_equipment_system_information(CommandableIf *t, int &voltage, int &bcs, int &bcl)
+command_result get_ue_system_information_gsm(CommandableIf *t, std::string &local_area_code, int &cell_id)
 {
-    ESP_LOGV(TAG, "%s", __func__ );
-    std::string_view out;
-    auto ret = generic_get_string(t, "AT+CPSI?\r", out);
-    if (ret != command_result::OK) {
-        return ret;
-    }
-    // Parsing +CPSI: TODO
-    constexpr std::string_view pattern = "+CPSI: ";
-    //constexpr int num_pos = pattern.size();
-    int dot_pos;
-    if (out.find(pattern) == std::string::npos ||
-            (dot_pos = out.find('.')) == std::string::npos) {
-        return command_result::FAIL;
-    }
+  ESP_LOGV(TAG, "%s", __func__ );
+  std::string_view out;
 
-    return command_result::OK;
+  auto ret = generic_get_string(t, "AT+CPSI?\r", out);
+
+  if (ret != command_result::OK) {
+      return ret;
+  }
+
+  constexpr std::string_view pattern = "+CPSI: ";
+  int pos;
+  if ((pos = out.find(pattern)) == std::string::npos) {
+      return command_result::FAIL;
+  }
+  out = out.substr(pos);
+  if ((pos = out.find(',')) == std::string::npos) {
+        return command_result::FAIL;
+  }
+  out = out.substr(pos + 1);
+  if ((pos = out.find(',')) == std::string::npos) {
+       return command_result::FAIL;
+  }
+
+ 
+
+  out = out.substr(pos + 1);
+    if ((pos = out.find(',')) == std::string::npos) {
+       return command_result::FAIL;
+  }
+
+ 
+
+  out = out.substr(pos + 1);
+  if ((pos = out.find(',')) == std::string::npos) {
+       return command_result::FAIL;
+  }
+  local_area_code = out.substr(0, pos);
+
+ 
+
+  out = out.substr(pos + 1);
+    if ((pos = out.find(',')) == std::string::npos) {
+       return command_result::FAIL;
+  }
+
+ 
+
+  if (std::from_chars(out.data(), out.data() + pos, cell_id).ec == std::errc::invalid_argument) {
+       return command_result::FAIL;
+  }
+
+  return command_result::OK;
 }
 
+command_result get_ue_system_information_lte(CommandableIf *t, std::string &trace_area_code, int &pcell_id, long int &rssnr)
+{
+  ESP_LOGV(TAG, "%s", __func__ );
+  std::string_view out;
+
+ 
+
+  auto ret = generic_get_string(t, "AT+CPSI?\r", out);
+
+ 
+
+  if (ret != command_result::OK) {
+      return ret;
+  }
+
+ 
+
+  auto pos = out.find("+CPSI");
+  auto property = 0;
+  while (pos != std::string::npos) {
+      property++;
+      if (property == 20) {  // operator name is after second comma (as a 3rd property of COPS string)
+        trace_area_code = out.substr(++pos);
+      }
+      if(property == 21)
+      {
+        if (std::from_chars(out.data(), out.data() + pos, pcell_id).ec == std::errc::invalid_argument) {
+             return command_result::FAIL;
+        }
+      }
+      if(property == 28)
+      {
+        /*Average reference signal signal-to-noise ratio of the serving cell The
+        value of SINR can be calculated according to <RSSNR>,the formula is
+        as below:
+        SINR=2 * <RSSNR> - 20
+        The range of SINR is from -20 to 30 */
+
+ 
+
+        if (std::from_chars(out.data(), out.data() + pos, rssnr).ec == std::errc::invalid_argument) {
+             return command_result::FAIL;
+        }
+        return command_result::OK;
+      }
+      pos = out.find(',', ++pos);
+  }
+
+//  constexpr std::string_view pattern = "+CPSI: ";
+//  int pos;
+//  if ((pos = out.find(pattern)) == std::string::npos) {
+//      return command_result::FAIL;
+//  }
+//  out = out.substr(pos);
+//  if ((pos = out.find(',')) == std::string::npos) {
+//        return command_result::FAIL;
+//  }
+//
+//  out = out.substr(pos + 1);
+//  if ((pos = out.find(',')) == std::string::npos) {
+//       return command_result::FAIL;
+//  }
+//
+//  out = out.substr(pos + 1);
+//    if ((pos = out.find(',')) == std::string::npos) {
+//       return command_result::FAIL;
+//  }
+//
+//  out = out.substr(pos + 1);
+//  if ((pos = out.find(',')) == std::string::npos) {
+//       return command_result::FAIL;
+//  }
+//  trace_area_code = out.substr(0, pos);
+//
+//  out = out.substr(pos + 1);
+//    if ((pos = out.find(',')) == std::string::npos) {
+//       return command_result::FAIL;
+//  }
+//
+//  if (std::from_chars(out.data(), out.data() + pos, pcell_id).ec == std::errc::invalid_argument) {
+//       return command_result::FAIL;
+//  }
+//
+//  out = out.substr(pos + 1);
+//    if ((pos = out.find(',')) == std::string::npos) {
+//       return command_result::FAIL;
+//  }
+//
+//  out = out.substr(pos + 1);
+//    if ((pos = out.find(',')) == std::string::npos) {
+//       return command_result::FAIL;
+//  }
+//
+//  out = out.substr(pos + 1);
+//    if ((pos = out.find(',')) == std::string::npos) {
+//       return command_result::FAIL;
+//  }
+//
+//  out = out.substr(pos + 1);
+//    if ((pos = out.find(',')) == std::string::npos) {
+//       return command_result::FAIL;
+//  }
+//
+//  out = out.substr(pos + 1);
+//    if ((pos = out.find(',')) == std::string::npos) {
+//       return command_result::FAIL;
+//  }
+//
+//  out = out.substr(pos + 1);
+//    if ((pos = out.find(',')) == std::string::npos) {
+//       return command_result::FAIL;
+//  }
+//
+//  out = out.substr(pos + 1);
+//    if ((pos = out.find(',')) == std::string::npos) {
+//       return command_result::FAIL;
+//  }
+//
+//  out = out.substr(pos + 1);
+//    if ((pos = out.find(',')) == std::string::npos) {
+//       return command_result::FAIL;
+//  }
+//  /*Average reference signal signal-to-noise ratio of the serving cell The
+//  value of SINR can be calculated according to <RSSNR>,the formula is
+//  as below:
+//  SINR=2 * <RSSNR> - 20
+//  The range of SINR is from -20 to 30 */
+//
+//  if (std::from_chars(out.data(), out.data() + pos, rssnr).ec == std::errc::invalid_argument) {
+//       return command_result::FAIL;
+//  }
+//
+  return command_result::FAIL;
+}
+
+
+command_result get_ue_system_information_attachment(CommandableIf *t, std::string &sys_mode)
+{
+  ESP_LOGV(TAG, "%s", __func__ );
+     return generic_get_string(t, "AT+CPSI?\r", sys_mode, 9000);
+}
+
+command_result get_network_registration(CommandableIf *t, int &reg_status)
+{
+  ESP_LOGV(TAG, "%s", __func__ );
+  std::string_view out;
+
+ 
+
+  auto ret = generic_get_string(t, "AT+CREG?\r", out);
+
+ 
+
+  if (ret != command_result::OK) {
+      return ret;
+  }
+
+ 
+
+  constexpr std::string_view pattern = "+CREG: ";
+  int reg_status_pos = out.find(",") + 1; // Skip "<n>,"
+  if (out.find(pattern) == std::string::npos) {
+      return command_result::FAIL;
+  }
+
+ 
+
+  if (std::from_chars(out.data() + reg_status_pos, out.data() + out.size(), reg_status).ec == std::errc::invalid_argument) {
+      return command_result::FAIL;
+  }
+
+ 
+
+  return command_result::OK;
+}
 
 } // esp_modem::dce_commands
