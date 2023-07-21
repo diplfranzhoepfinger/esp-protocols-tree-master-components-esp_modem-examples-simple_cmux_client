@@ -304,6 +304,20 @@ extern "C" void simple_cmux_client_main(void)
     esp_modem::command_result res;
 
 
+
+    /* Sets echo mode */
+    res = dce->set_echo(true);
+    if (res == esp_modem::command_result::OK) {
+        std::cout << "Sets echo mode OK" << std::endl;
+    } else {
+        std::cout << "Sets echo mode ERROR or TIMEOUT" << std::endl;
+    }
+
+
+
+
+
+
     /* AT+CPSI Inquiring UE system information */
     int milli_volt, bcl, bcs;
     res = dce->get_user_equipment_system_information(milli_volt, bcl, bcs);
