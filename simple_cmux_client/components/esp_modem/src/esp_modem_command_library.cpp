@@ -398,7 +398,7 @@ command_result send_sms(CommandableIf *t, const std::string &number, const std::
 command_result set_cmux(CommandableIf *t)
 {
     ESP_LOGV(TAG, "%s", __func__ );
-    return generic_command_common(t, "AT+CMUX=0\r", 10000);
+    return generic_command_common(t, "AT+CMUX=0\r");
 }
 
 command_result read_pin(CommandableIf *t, bool &pin_ok)
