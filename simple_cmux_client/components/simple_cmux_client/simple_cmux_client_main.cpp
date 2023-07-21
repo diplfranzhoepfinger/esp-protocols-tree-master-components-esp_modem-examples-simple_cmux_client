@@ -306,7 +306,7 @@ extern "C" void simple_cmux_client_main(void)
 
 
     /* Sets echo mode */
-    res = dce->set_echo(true);
+    res = dce->set_echo(false);
     if (res == esp_modem::command_result::OK) {
         std::cout << "Sets echo mode OK" << std::endl;
     } else {
