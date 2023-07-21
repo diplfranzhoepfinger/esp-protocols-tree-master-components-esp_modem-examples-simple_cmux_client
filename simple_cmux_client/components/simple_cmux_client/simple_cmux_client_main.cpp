@@ -328,18 +328,28 @@ extern "C" void simple_cmux_client_main(void)
         std::cout << "Modem IMSI number:" << str << std::endl;
     }
 
-
+    esp_modem::command_result res;
 
 
     /* AT+CPSI Inquiring UE system information */
     int milli_volt, bcl, bcs;
-    esp_modem::command_result res = dce->get_user_equipment_system_information(milli_volt, bcl, bcs);
-    dce->sync();
+    res = dce->get_user_equipment_system_information(milli_volt, bcl, bcs);
     if (res == esp_modem::command_result::OK) {
         std::cout << "Inquiring UE system information:" << str << std::endl;
     } else {
         std::cout << "Inquiring UE system information ERROR or TIMEOUT" << std::endl;
     }
+
+
+    int rssi, ber;
+    res = dce->get_signal_quality(rssi, ber);
+    if (res == esp_modem::command_result::OK) {
+        std::cout << "get_signal_quality:" << " rssi: " << rssi << " ber: " << ber << std::endl;
+    } else {
+        std::cout << "get_signal_quality ERROR or TIMEOUT" << std::endl;
+    }
+
+
 
 
 
@@ -462,8 +472,6 @@ vTaskDelay(2000 / portTICK_PERIOD_MS);
 
 
 for (int i = 0; i < 10; ++i) {
-
-
     /* AT+CPSI Inquiring UE system information */
     res = dce->get_user_equipment_system_information(milli_volt, bcl, bcs);
     if (res == esp_modem::command_result::OK) {
@@ -471,10 +479,6 @@ for (int i = 0; i < 10; ++i) {
     } else {
         std::cout << "Inquiring UE system information ERROR or TIMEOUT" << std::endl;
     }
-    vTaskDelay(2000 / portTICK_PERIOD_MS);
-    dce->sync();
-    vTaskDelay(2000 / portTICK_PERIOD_MS);
-
 }
 
 
