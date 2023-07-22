@@ -35,7 +35,7 @@
     #include "A7672_gnss.hpp"
 #endif
 
-
+//x
 
 #if defined(CONFIG_EXAMPLE_MODEM_DEVICE_SHINY) || defined(CONFIG_EXAMPLE_MODEM_DEVICE_SIM7070_GNSS) || defined(CONFIG_EXAMPLE_MODEM_DEVICE_A7672_GNSS)
     #define SUPPORT_URC_HANDLER 1
