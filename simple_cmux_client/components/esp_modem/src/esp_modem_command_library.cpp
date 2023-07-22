@@ -58,6 +58,10 @@ static command_result generic_get_string(CommandableIf *t, const std::string &co
     return t->command(command, [&](uint8_t *data, size_t len) {
         size_t pos = 0;
         std::string_view response((char *)data, len);
+
+        ESP_LOGI(TAG, "Received **raw** Response: {%.*s}\n", static_cast<int>(response.size()), response.data());
+
+
         while ((pos = response.find('\n')) != std::string::npos) {
             std::string_view token = response.substr(0, pos);
             for (auto it = token.end() - 1; it > token.begin(); it--) // strip trailing CR or LF
