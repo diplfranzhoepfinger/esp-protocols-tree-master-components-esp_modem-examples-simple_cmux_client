@@ -299,7 +299,7 @@ bool CMux::on_cmux_data(uint8_t *data, size_t actual_len)
         actual_len = term->read(data, buffer.size);
 #endif
     }
-    ESP_LOG_BUFFER_HEXDUMP("CMUX Received", data, actual_len, ESP_LOG_VERBOSE);
+    ESP_LOG_BUFFER_HEXDUMP("CMUX Received", data, actual_len, ESP_LOG_INFO);
     CMuxFrame frame = { .ptr = data, .len = actual_len };
     while (frame.len > 0) {
         switch (state) {
@@ -424,9 +424,9 @@ int CMux::write(int virtual_term, uint8_t *data, size_t len)
         term->write(frame, 4);
         term->write(data, batch_len);
         term->write(frame + 4, 2);
-        ESP_LOG_BUFFER_HEXDUMP("Send", frame, 4, ESP_LOG_VERBOSE);
-        ESP_LOG_BUFFER_HEXDUMP("Send", data, batch_len, ESP_LOG_VERBOSE);
-        ESP_LOG_BUFFER_HEXDUMP("Send", frame + 4, 2, ESP_LOG_VERBOSE);
+        ESP_LOG_BUFFER_HEXDUMP("Send", frame, 4, ESP_LOG_INFO);
+        ESP_LOG_BUFFER_HEXDUMP("Send", data, batch_len, ESP_LOG_INFO);
+        ESP_LOG_BUFFER_HEXDUMP("Send", frame + 4, 2, ESP_LOG_INFO);
         need_write -= batch_len;
         data += batch_len;
     }

@@ -21,13 +21,13 @@ static command_result generic_command(CommandableIf *t, const std::string &comma
                                       const std::list<std::string_view> &fail_phrase,
                                       uint32_t timeout_ms)
 {
-    ESP_LOGD(TAG, "%s command %s\n", __func__, command.c_str());
+    ESP_LOGI(TAG, "%s AT command %s", __func__, command.c_str());
     return t->command(command, [&](uint8_t *data, size_t len) {
         std::string_view response((char *)data, len);
         if (data == nullptr || len == 0 || response.empty()) {
             return command_result::TIMEOUT;
         }
-        ESP_LOGD(TAG, "Response: %.*s\n", (int)response.length(), response.data());
+        ESP_LOGI(TAG, "AT Response: %.*s", (int)response.length(), response.data());
         for (auto &it : pass_phrase)
             if (response.find(it) != std::string::npos) {
                 return command_result::OK;
@@ -54,6 +54,7 @@ command_result generic_command(CommandableIf *t, const std::string &command,
 static command_result generic_get_string(CommandableIf *t, const std::string &command, std::string_view &output, uint32_t timeout_ms = 500)
 {
     ESP_LOGV(TAG, "%s", __func__ );
+    ESP_LOGI(TAG, "Sent AT Command: {%s}", command.c_str());
     return t->command(command, [&](uint8_t *data, size_t len) {
         size_t pos = 0;
         std::string_view response((char *)data, len);
@@ -63,7 +64,7 @@ static command_result generic_get_string(CommandableIf *t, const std::string &co
                 if (*it == '\r' || *it == '\n') {
                     token.remove_suffix(1);
                 }
-            ESP_LOGV(TAG, "Token: {%.*s}\n", static_cast<int>(token.size()), token.data());
+            ESP_LOGI(TAG, "Received AT Response: {%.*s}\n", static_cast<int>(token.size()), token.data());
 
             if (token.find("OK") != std::string::npos) {
                 return command_result::OK;
@@ -446,18 +447,23 @@ command_result get_signal_quality(CommandableIf *t, int &rssi, int &ber)
         return ret;
     }
 
+    ESP_LOGI(TAG, "Get Signal strength response %s", std::string(out).c_str());
+
     constexpr std::string_view pattern = "+CSQ: ";
     constexpr int rssi_pos = pattern.size();
     int ber_pos;
     if (out.find(pattern) == std::string::npos ||
             (ber_pos = out.find(',')) == std::string::npos) {
+      ESP_LOGI(TAG, "Get Signal Failed reached failed 1");
         return command_result::FAIL;
     }
 
     if (std::from_chars(out.data() + rssi_pos, out.data() + ber_pos, rssi).ec == std::errc::invalid_argument) {
+      ESP_LOGI(TAG, "Get Signal Failed reached failed 2");
         return command_result::FAIL;
     }
     if (std::from_chars(out.data() + ber_pos + 1, out.data() + out.size(), ber).ec == std::errc::invalid_argument) {
+      ESP_LOGI(TAG, "Get Signal Failed reached failed 3");
         return command_result::FAIL;
     }
     return command_result::OK;
