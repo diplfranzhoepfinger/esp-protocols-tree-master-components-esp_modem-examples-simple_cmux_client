@@ -1,5 +1,44 @@
 # Changelog
 
+## [1.0.3](https://github.com/espressif/esp-protocols/commits/modem-v1.0.3)
+
+### Bug Fixes
+
+- Fix to allow MSC frame (SIM800 CMUX) after v1.0.2 ([8d5947e](https://github.com/espressif/esp-protocols/commit/8d5947e), [#366](https://github.com/espressif/esp-protocols/issues/366))
+- Add CMUX example to target tests ([4f2ebaa](https://github.com/espressif/esp-protocols/commit/4f2ebaa))
+
+## [1.0.2](https://github.com/espressif/esp-protocols/commits/modem-v1.0.2)
+
+### Features
+
+- Add factory method for simple creation of custom DCEs ([4cf9e50](https://github.com/espressif/esp-protocols/commit/4cf9e50))
+- Support custom transport in AT TCP client example ([ae629ed](https://github.com/espressif/esp-protocols/commit/ae629ed))
+
+### Bug Fixes
+
+- Fix host test race with async read and d'structor ([c89d42f](https://github.com/espressif/esp-protocols/commit/c89d42f))
+- More error handling in cmux protocol ([8edbac6](https://github.com/espressif/esp-protocols/commit/8edbac6))
+- Fix netif to set PPP config in C++ way ([5287432](https://github.com/espressif/esp-protocols/commit/5287432))
+- Fix vfs terminal not to reset read_cb() automatically ([25a35e2](https://github.com/espressif/esp-protocols/commit/25a35e2))
+- Fix netif data race causing PPP startup delays ([c8c0507](https://github.com/espressif/esp-protocols/commit/c8c0507), [#308](https://github.com/espressif/esp-protocols/issues/308))
+- Added support for inflatable buffer ([cb6e03a](https://github.com/espressif/esp-protocols/commit/cb6e03a), [#272](https://github.com/espressif/esp-protocols/issues/272))
+- Fix LoadProhibited after failed CMUX initialization (IDFGH-10845) ([60c87dd](https://github.com/espressif/esp-protocols/commit/60c87dd))
+
+## [1.0.1](https://github.com/espressif/esp-protocols/commits/modem-v1.0.1)
+
+### Bug Fixes
+
+- Support UART clean build with IDF v5.2 ([e620eb5](https://github.com/espressif/esp-protocols/commit/e620eb5))
+- enable code coverage publishing to github pages ([4910e89](https://github.com/espressif/esp-protocols/commit/4910e89))
+- fix esp_modem build issue ([ab94566](https://github.com/espressif/esp-protocols/commit/ab94566))
+- Example to use 1.0.0 ([afb6930](https://github.com/espressif/esp-protocols/commit/afb6930))
+- Changelog to correctly pick references ([423e965](https://github.com/espressif/esp-protocols/commit/423e965))
+
+### Updated
+
+- docs(esp_modem): updated documents to show missed topics ([0534853](https://github.com/espressif/esp-protocols/commit/0534853))
+- docs(common): improving documentation ([ca3fce0](https://github.com/espressif/esp-protocols/commit/ca3fce0))
+
 ## [1.0.0](https://github.com/espressif/esp-protocols/commits/modem-v1.0.0)
 
 ### Major changes

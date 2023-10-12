@@ -49,9 +49,9 @@ esp_err_t Netif::esp_modem_post_attach(esp_netif_t *esp_netif, void *args)
     ESP_ERROR_CHECK(esp_netif_set_driver_config(esp_netif, &driver_ifconfig));
     // check if PPP error events are enabled, if not, do enable the error occurred/state changed
     // to notify the modem layer when switching modes
-    esp_netif_ppp_config_t ppp_config = { .ppp_phase_event_enabled = true,    // assuming phase enabled, as earlier IDFs
-                                          .ppp_error_event_enabled = false
-                                        }; // don't provide cfg getters so we enable both events
+    esp_netif_ppp_config_t ppp_config = { };
+    ppp_config.ppp_phase_event_enabled = true;    // assuming phase enabled, as earlier IDFs
+    ppp_config.ppp_error_event_enabled = false;   // don't provide cfg getters so we enable both events
 #if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(4, 4, 0)
     esp_netif_ppp_get_params(esp_netif, &ppp_config);
 #endif // ESP-IDF >= v4.4
@@ -65,9 +65,7 @@ esp_err_t Netif::esp_modem_post_attach(esp_netif_t *esp_netif, void *args)
 
 void Netif::receive(uint8_t *data, size_t len)
 {
-    if (signal.is_any(PPP_STARTED)) {
-        esp_netif_receive(driver.base.netif, data, len, nullptr);
-    }
+    esp_netif_receive(driver.base.netif, data, len, nullptr);
 }
 
 Netif::Netif(std::shared_ptr<DTE> e, esp_netif_t *ppp_netif) :
@@ -89,8 +87,8 @@ void Netif::start()
         receive(data, len);
         return true;
     });
-    esp_netif_action_start(driver.base.netif, nullptr, 0, nullptr);
     signal.set(PPP_STARTED);
+    esp_netif_action_start(driver.base.netif, nullptr, 0, nullptr);
 }
 
 void Netif::stop()
