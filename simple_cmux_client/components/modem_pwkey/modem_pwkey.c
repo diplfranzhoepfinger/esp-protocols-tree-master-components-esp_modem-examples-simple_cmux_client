@@ -16,30 +16,36 @@ const static char * const TAG = "modem_pwkey";
 #define SIMCOM_STATUS_PIN 10
 
 
+#define GPIO_INPUT_STATUS  ((gpio_num_t)SIMCOM_STATUS_PIN)
+#define GPIO_INPUT_PIN_SEL (1ULL<<GPIO_INPUT_STATUS)
+
+#define GPIO_OUTPUT_PWRKEY  ((gpio_num_t)SIMCOM_PWRKEY_PIN)
+#define GPIO_OUTPUT_PIN_SEL (1ULL<<GPIO_OUTPUT_PWRKEY)
 
 
 void init_modem_pwkey(void)
 {
-    /* Configure the IOMUX register for pad BLINK_GPIO (some pads are
-       muxed to GPIO on reset already, but some default to other
-       functions and need to be switched to GPIO. Consult the
-       Technical Reference for a list of pads and their default
-       functions.)
-    */
-    gpio_reset_pin(SIMCOM_PWRKEY_PIN);
-    gpio_reset_pin(SIMCOM_STATUS_PIN);
-    gpio_pullup_en(SIMCOM_STATUS_PIN);
 
-    /* Set the GPIO as a push/pull output */
-    gpio_set_direction(SIMCOM_PWRKEY_PIN, GPIO_MODE_OUTPUT);
-    gpio_set_level(SIMCOM_PWRKEY_PIN, 0); // switch off first.
+    gpio_config_t io_conf_in = {};                     //zero-initialize the config structure.
+
+    io_conf_in.intr_type = GPIO_INTR_DISABLE;          //disable interrupt
+    io_conf_in.mode = GPIO_MODE_INPUT;                //set as output mode
+    io_conf_in.pin_bit_mask = GPIO_INPUT_PIN_SEL;       //bit mask of the pins that you want to set,e.g.GPIO18/19
+    io_conf_in.pull_down_en = GPIO_PULLDOWN_DISABLE;   //disable pull-down mode
+    io_conf_in.pull_up_en = GPIO_PULLUP_ENABLE;       //disable pull-up mode
+
+    gpio_config(&io_conf_in);                          //configure GPIO with the given settings
 
 
-    /* Set the GPIO as a push/pull output */
-    gpio_set_direction(SIMCOM_STATUS_PIN, GPIO_MODE_INPUT);
+    gpio_config_t io_conf_out = {};                     //zero-initialize the config structure.
 
+    io_conf_out.intr_type = GPIO_INTR_DISABLE;          //disable interrupt
+    io_conf_out.mode = GPIO_MODE_OUTPUT;                //set as output mode
+    io_conf_out.pin_bit_mask = GPIO_OUTPUT_PIN_SEL;       //bit mask of the pins that you want to set,e.g.GPIO18/19
+    io_conf_out.pull_down_en = GPIO_PULLDOWN_DISABLE;   //disable pull-down mode
+    io_conf_out.pull_up_en = GPIO_PULLUP_DISABLE;       //disable pull-up mode
 
-
+    gpio_config(&io_conf_out);                          //configure GPIO with the given settings
 
     //
     // It is recommended to ensure that the VBAT voltage rises and stabilizes before pulling downthePWRKEY pin to start up.
@@ -66,10 +72,10 @@ void power_up_modem_pwkey(void)
     vTaskDelay(100 / portTICK_PERIOD_MS);
 
     ESP_LOGI(TAG, "POWER ON");
-    gpio_set_level(SIMCOM_PWRKEY_PIN, 1); // switch on for 1s.
+    gpio_set_level(GPIO_OUTPUT_PWRKEY, 1); // switch on for 1s.
     vTaskDelay(1000 / portTICK_PERIOD_MS);
     ESP_LOGI(TAG, "POWER ON OK");
-    gpio_set_level(SIMCOM_PWRKEY_PIN, 0); // switch on done
+    gpio_set_level(GPIO_OUTPUT_PWRKEY, 0); // switch on done
     do {
     	status = !gpio_get_level(SIMCOM_STATUS_PIN);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
@@ -95,10 +101,10 @@ void power_down_modem_pwkey(void)
     vTaskDelay(100 / portTICK_PERIOD_MS);
 
     ESP_LOGI(TAG, "POWER OFF");
-    gpio_set_level(SIMCOM_PWRKEY_PIN, 1); // switch on for 1s.
+    gpio_set_level(GPIO_OUTPUT_PWRKEY, 1); // switch on for 1s.
     vTaskDelay(3500 / portTICK_PERIOD_MS);
     ESP_LOGI(TAG, "POWER OFF OK");
-    gpio_set_level(SIMCOM_PWRKEY_PIN, 0); // switch on done
+    gpio_set_level(GPIO_OUTPUT_PWRKEY, 0); // switch on done
     do {
     	status = !gpio_get_level(SIMCOM_STATUS_PIN);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
@@ -129,10 +135,10 @@ void power_reset_modem_pwkey(void)
 	vTaskDelay(100 / portTICK_PERIOD_MS);
 
 	ESP_LOGI(TAG, "RESET ON");
-	gpio_set_level(SIMCOM_PWRKEY_PIN, 1); // switch on for 1s.
+	gpio_set_level(GPIO_OUTPUT_PWRKEY, 1); // switch on for 1s.
 	vTaskDelay(14000 / portTICK_PERIOD_MS);
 	ESP_LOGI(TAG, "RESET ON OK");
-	gpio_set_level(SIMCOM_PWRKEY_PIN, 0); // switch on done
+	gpio_set_level(GPIO_OUTPUT_PWRKEY, 0); // switch on done
 
 
 	vTaskDelay(1000 / portTICK_PERIOD_MS);
