@@ -212,6 +212,15 @@ bool CMux::on_header(CMuxFrame &frame)
     }
     size_t payload_offset = std::min(frame.len, 4 - frame_header_offset);
     memcpy(frame_header + frame_header_offset, frame.ptr, payload_offset);
+    if (frame_header[1] == 0xEF) {
+        dlci = 0;
+        type = frame_header[1];
+        payload_len = 0;
+        data_available(&frame.ptr[0], payload_len); // Notify DISC
+        frame.advance(payload_offset);
+        state = cmux_state::FOOTER;
+        return true;
+    }
 #ifndef ESP_MODEM_CMUX_USE_SHORT_PAYLOADS_ONLY
     if ((frame_header[3] & 1) == 0) {
         if (frame_header_offset + frame.len <= 4) {
@@ -234,10 +243,6 @@ bool CMux::on_header(CMuxFrame &frame)
     // since CRC could be evaluated after the frame payload gets received
     if (dlci > MAX_TERMINALS_NUM || (frame_header[1] & 0x01) == 0 ||
             (((type & FT_UIH) != FT_UIH) &&  type != (FT_UA | PF) ) ) {
-        ESP_LOGD("CMUX", "dlci (%d) > MAX_TERMINALS_NUM (%d)           ==> %s", dlci, MAX_TERMINALS_NUM, dlci > MAX_TERMINALS_NUM ? "true" : "false");
-        ESP_LOGD("CMUX", "frame_header[1] (%d) & 0x01) (%d) == 0       ==> %s", frame_header[1], (frame_header[1] & 0x01), (frame_header[1] & 0x01) == 0 ? "true" : "false");
-        ESP_LOGD("CMUX", "(((type(%d) & FT_UIH) != FT_UIH)             ==> %s", type,  ((type & FT_UIH) != FT_UIH) ? "true" : "false");
-        ESP_LOGD("CMUX", "type(%d) != (FT_UA | PF)                     ==> %s", type,  type != (FT_UA | PF) ? "true" : "false");
         recover_protocol(protocol_mismatch_reason::UNEXPECTED_HEADER);
         return true;
     }
