@@ -1,0 +1,21 @@
+[
+  {
+    "id": -1320983581,
+    "idfLocation": "/home/franz/esp-idf-v5.3.1",
+    "idfVersion": "5.3.1",
+    "active": true,
+    "systemGitExecutablePath": "/usr/bin/git",
+    "systemPythonExecutablePath": "/usr/bin/python3",
+    "envVars": {
+      "PATH": "/home/franz/.espressif/tools/xtensa-esp-elf-gdb/14.2_20240403/xtensa-esp-elf-gdb/bin:/home/franz/.espressif/tools/riscv32-esp-elf-gdb/14.2_20240403/riscv32-esp-elf-gdb/bin:/home/franz/.espressif/tools/xtensa-esp-elf/esp-13.2.0_20240530/xtensa-esp-elf/bin:/home/franz/.espressif/tools/esp-clang/16.0.1-fe4f10a809/esp-clang/bin:/home/franz/.espressif/tools/riscv32-esp-elf/esp-13.2.0_20240530/riscv32-esp-elf/bin:/home/franz/.espressif/tools/esp32ulp-elf/2.38_20240113/esp32ulp-elf/bin:/home/franz/.espressif/tools/cmake/3.24.0/bin:/home/franz/.espressif/tools/openocd-esp32/v0.12.0-esp32-20240318/openocd-esp32/bin:/home/franz/.espressif/tools/ninja/1.11.1/:/home/franz/.espressif/tools/qemu-xtensa/esp_develop_9.0.0_20240606/qemu/bin:/home/franz/.espressif/tools/qemu-riscv32/esp_develop_9.0.0_20240606/qemu/bin:/home/franz/.espressif/python_env/idf5.3_py3.12_env/bin:/home/franz/esp-idf-v5.3.1/tools:$PATH",
+      "IDF_COMPONENT_MANAGER": "1",
+      "OPENOCD_SCRIPTS": "/home/franz/.espressif/tools/openocd-esp32/v0.12.0-esp32-20240318/openocd-esp32/share/openocd/scripts",
+      "IDF_DEACTIVATE_FILE_PATH": "/tmp/tmplu1fjfhnidf_678356",
+      "IDF_MAINTAINER": "1",
+      "IDF_PATH": "/home/franz/esp-idf-v5.3.1",
+      "IDF_PYTHON_ENV_PATH": "/home/franz/.espressif/python_env/idf5.3_py3.12_env",
+      "ESP_IDF_VERSION": "5.3.1",
+      "ESP_ROM_ELF_DIR": "/home/franz/.espressif/tools/esp-rom-elfs/20240305/"
+    }
+  }
+]
